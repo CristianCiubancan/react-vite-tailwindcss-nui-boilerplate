@@ -1,17 +1,18 @@
-import { useEffect } from "react";
+// src/App.tsx
+import { useState } from "react";
 import ClientNuiComponent from "./components/ClientNuiComponent";
-import { fetchNui } from "./utils/fetch-nui";
+import { useNuiEvents } from "./utils/nui-events";
 
 function App() {
-  useEffect(() => {
-    fetchNui("focusTestResource", {})
-      .then((resp) => console.log("Focus event response:", resp))
-      .catch((err) => console.error("Focus event error:", err));
-  }, []);
+  const [showUI, setShowUI] = useState(false);
+
+  useNuiEvents("playerSpawnComplete", () => {
+    setShowUI(true);
+  });
 
   return (
     <>
-      <ClientNuiComponent />
+      {showUI ? <ClientNuiComponent onClose={() => setShowUI(false)} /> : null}
     </>
   );
 }

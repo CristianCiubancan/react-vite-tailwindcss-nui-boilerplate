@@ -1,28 +1,36 @@
+// src/fivem/client/ui.ts
 /// <reference types="@citizenfx/client" />
 
-// Existing event for handling test data from UI
-RegisterNuiCallbackType('testEventName');
-on('__cfx_nui:testEventName', (data: any, cb: (returnData: any) => void) => {
-  console.log('Client received data from NUI:', data);
+import { createFrontView, destroyFrontView } from './camera';
 
-  // Send a response back to the front-end’s fetchNui Promise
-  cb({ status: 'ok', message: 'Client got your data!' });
 
-  // (Optional) Push an event to the front-end
-  SendNuiMessage(
-    JSON.stringify({
-      type: 'testEvent',
-      data: {
-        message: 'Hello from the client script!',
-      },
-    })
-  );
+interface FrontViewData {
+  action: 'on' | 'off';
+}
+
+RegisterNuiCallbackType('frontview');
+on('__cfx_nui:frontview', (data: FrontViewData, cb: (returnData: any) => void) => {
+  if (data.action === 'on') {
+    createFrontView();
+    cb({ status: 'ok', message: 'Front view enabled!' });
+  } else if (data.action === 'off') {
+    destroyFrontView();
+    cb({ status: 'ok', message: 'Front view disabled!' });
+  } else {
+    cb({ status: 'error', message: 'Invalid action' });
+  }
 });
 
-// New event for setting focus when the UI mounts
-RegisterNuiCallbackType('focusTestResource');
-on('__cfx_nui:focusTestResource', (_data: any, cb: (returnData: any) => void) => {
-  console.log('Focusing NUI for focusTestResource event');
-  SetNuiFocus(true, true); // This will allow both mouse and keyboard inputs.
+RegisterNuiCallbackType('openUI');
+on('__cfx_nui:openUI', (_data: any, cb: (returnData: any) => void) => {
+  console.log('Focusing NUI for openUI event');
+  SetNuiFocus(true, true);
   cb({ status: 'ok', message: 'NUI focus set' });
+});
+
+RegisterNuiCallbackType('closeUI');
+on('__cfx_nui:closeUI', (_data: any, cb: (returnData: any) => void) => {
+  console.log('Removing NUI focus');
+  SetNuiFocus(false, false);
+  cb({ status: 'ok', message: 'NUI focus removed' });
 });
