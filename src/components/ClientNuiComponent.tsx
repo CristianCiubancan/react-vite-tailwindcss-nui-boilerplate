@@ -6,6 +6,10 @@ const ClientNuiComponent: React.FC = () => {
   const [serverMessage, setServerMessage] = useState("No data received yet.");
 
   const handleClick = useCallback(() => {
+    fetchNui("frontview", { action: "off" })
+      .then((resp) => console.log("Front view toggled:", resp))
+      .catch((err) => console.error("NUI fetch error:", err));
+
     fetchNui("testEventName", { foo: "bar" })
       .then((resp: any) => console.log("Response from client callback:", resp))
       .catch((err: any) => console.error("NUI fetch error:", err));
