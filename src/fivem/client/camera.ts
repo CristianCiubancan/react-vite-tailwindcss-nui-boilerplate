@@ -14,9 +14,6 @@ function movePlayerToPreview() {
 }
 
 function createFrontView() {
-  // First, move the player to the preview location
-  movePlayerToPreview();
-
   // Use the preset camera coordinates from the configuration
   const { x, y, z, heading } = Config.CameraCoords;
 
@@ -36,6 +33,16 @@ function destroyFrontView() {
     frontCamera = null;
   }
 }
+
+on('playerSpawned', () => {
+  // Force spawn at the apartment
+  movePlayerToPreview();
+
+  // Wait a moment for everything to be ready, then set the front view.
+  setTimeout(() => {
+    createFrontView();
+  }, 1000); // Adjust the delay as needed
+});
 
 // Toggle the front view camera using the event "frontview"
 // It expects an object with an "action" property set to "on" or "off".

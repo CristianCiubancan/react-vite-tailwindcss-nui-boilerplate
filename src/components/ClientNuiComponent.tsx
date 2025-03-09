@@ -5,11 +5,19 @@ import { useNuiEvents } from "../utils/nui-events";
 const ClientNuiComponent: React.FC = () => {
   const [serverMessage, setServerMessage] = useState("No data received yet.");
 
-  const handleClick = useCallback(() => {
-    fetchNui("frontview", { action: "off" })
-      .then((resp) => console.log("Front view toggled:", resp))
-      .catch((err) => console.error("NUI fetch error:", err));
+  const handleFrontViewOn = useCallback(() => {
+    fetchNui("frontview", { action: "on" })
+      .then((resp: any) => console.log("Response from client callback:", resp))
+      .catch((err: any) => console.error("NUI fetch error:", err));
+  }, []);
 
+  const handleFrontViewOff = useCallback(() => {
+    fetchNui("frontview", { action: "off" })
+      .then((resp: any) => console.log("Response from client callback:", resp))
+      .catch((err: any) => console.error("NUI fetch error:", err));
+  }, []);
+
+  const handleClick = useCallback(() => {
     fetchNui("testEventName", { foo: "bar" })
       .then((resp: any) => console.log("Response from client callback:", resp))
       .catch((err: any) => console.error("NUI fetch error:", err));
@@ -47,6 +55,21 @@ const ClientNuiComponent: React.FC = () => {
       >
         Send Data to Client
       </button>
+
+      <button
+        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mb-4"
+        onClick={handleFrontViewOn}
+      >
+        Enable Front View
+      </button>
+
+      <button
+        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+        onClick={handleFrontViewOff}
+      >
+        Disable Front View
+      </button>
+
       <div className="text-gray-800">{serverMessage}</div>
     </div>
   );
