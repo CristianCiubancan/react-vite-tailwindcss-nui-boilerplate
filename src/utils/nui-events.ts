@@ -5,7 +5,15 @@ if (!window.eventHandlers) {
 window.addEventListener('message', (event) => {
   const { type, data } = event.data;
   if (type && window.eventHandlers[type]) {
-    window.eventHandlers[type].forEach((handler) => handler(data));
+    Promise.all(
+      window.eventHandlers[type].map(async (handler) => {
+        try {
+          await handler(data);
+        } catch (error) {
+          console.error(`Error in async handler for type "${type}":`, error);
+        }
+      })
+    );
   }
 });
 
