@@ -1,32 +1,8 @@
-if (!window.eventHandlers) {
-  window.eventHandlers = {};
-}
+export {};
 
-window.addEventListener('message', (event) => {
-  const { type, data } = event.data;
-  if (type && window.eventHandlers[type]) {
-    Promise.all(
-      window.eventHandlers[type].map(async (handler) => {
-        try {
-          await handler(data);
-        } catch (error) {
-          console.error(`Error in async handler for type "${type}":`, error);
-        }
-      })
-    );
+declare global {
+  interface Window {
+    __nuiListenerRegistered?: boolean;
+    eventHandlers: { [key: string]: Array<(data: any) => void | Promise<void>> };
   }
-});
-
-export function useNuiEvents(type: string, handler: (data: any) => void | Promise<void>) {
-  if (!window.eventHandlers[type]) {
-    window.eventHandlers[type] = [];
-  }
-  window.eventHandlers[type].push(handler);
-
-  return () => {
-    window.eventHandlers[type] = window.eventHandlers[type].filter((h) => h !== handler);
-    if (window.eventHandlers[type].length === 0) {
-      delete window.eventHandlers[type];
-    }
-  };
 }

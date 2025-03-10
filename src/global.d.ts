@@ -2,6 +2,7 @@ export {};
 
 declare global {
   interface Window {
-    eventHandlers: Record<string, Array<(data: any) => void | Promise<void>>>;
+    __nuiListenerRegistered?: boolean;
+    eventHandlers: { [key: string]: Array<(data: any) => void | Promise<void>> };
   }
 }
